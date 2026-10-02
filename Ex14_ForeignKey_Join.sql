@@ -55,3 +55,67 @@ ALTER TABLE clientes_loja
 ADD CONSTRAINT clientes_loja_email
 UNIQUE (email);
 
+
+-- aplicação do INNER JOIN para consultas envolvendo as duas tabelas acima
+
+-- mostrar ID, DESCRIÇÃO e VALOR do PEDIDO + NOME do CLIENTE
+SELECT
+    p.id,
+    p.descricao,
+    p.valor,
+    c.nome
+FROM pedidos_loja p
+INNER JOIN clientes_loja c
+ON p.cliente_id = c.id;
+
+
+-- Mostrar somente os pedidos pelo cliente GUSTAVO
+SELECT
+    p.descricao,
+    p.valor,
+    c.nome
+FROM pedidos_loja p
+INNER JOIN clientes_loja c
+ON p.cliente_id = c.id
+WHERE c.nome = 'Gustavo';
+
+
+
+-- Mostrar ID, DESCRIÇÃO, VALOR + NOME do CLIENTE ordenando os pedidos pelo valor do maior para o menor
+SELECT
+    p.id,
+    p.descricao,
+    p.valor,
+    c.nome
+FROM pedidos_loja p
+INNER JOIN clientes_loja c
+ON p.cliente_id = c.id
+ORDER BY p.valor DESC;
+
+
+
+-- mostrar NOME do CLIENTE e DESCRIÇÃO do PEDIDO e apenas pedidos com valor maior que 2000
+SELECT
+    c.nome,
+    p.descricao
+FROM pedidos_loja p
+INNER JOIN clientes_loja c
+ON p.cliente_id = c.id
+WHERE p.valor > 2000;
+
+
+
+-- Mostrar NOME do CLIENTE, DESCRIÇÃO e VALOR do PEDIDO para os pedidos do cliente ADRIANO cujo valor seja maior do que 2000
+SELECT
+    c.nome,
+    p.descricao,
+    p.valor
+FROM pedidos_loja p
+INNER JOIN clientes_loja c
+ON p.cliente_id = c.id
+WHERE c.nome = 'Adriano'
+AND p.valor >= 2000;
+
+
+
+
