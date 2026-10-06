@@ -194,7 +194,7 @@ SET valor = 105
 WHERE id = 9;
 
 
-
+-- Consulta que mostra nome do cliente, descrição do pedido e nome do produto 
 SELECT
     c.nome AS Nome_Cliente,
     p.descricao AS Descricao_Pedido,
@@ -205,10 +205,39 @@ INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id
 INNER JOIN produtos_livraria pr ON i.produto_id = pr.id;
 
 
--- Mostrar nome do cliente, id do pedido, nome do produto e a quantidade comprada
+-- Consulta que mostra nome do cliente, id do pedido, nome do produto e a quantidade comprada
 SELECT
     c.nome AS Nome_Cliente,
     p.id AS ID_Pedido,
+    pr.nome AS Nome_Produto,
+    i.quantidade AS Quantidade_Comprada
+FROM clientes_livraria c
+INNER JOIN pedidos_livraria p ON c.id = p.cliente_id
+INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id
+INNER JOIN produtos_livraria pr ON i.produto_id = pr.id;
+
+
+
+-- Consulta que mostra nome do cliente, id e descrição do pedido, nome do produto, quantidade comprada e preço do produto
+SELECT
+    c.nome AS Nome_Cliente, 
+    p.id AS ID_Pedido,
+    p.descricao AS Descricao_Pedido,
+    pr.nome AS Nome_Produto,
+    i.quantidade AS Quantidade_Comprada,
+    pr.preco AS Preco_Produto
+FROM clientes_livraria c
+INNER JOIN pedidos_livraria p ON c.id = p.cliente_id
+INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id  
+INNER JOIN produtos_livraria pr ON i.produto_id = pr.id;
+
+
+
+-- Consulta para mostrar nome e email do cliente, descrição do pedido, nome do produto e quantidade comprada
+SELECT
+    c.nome AS Nome_Cliente,
+    c.email AS Email_Cliente,
+    p.descricao AS Descricao_Pedido, 
     pr.nome AS Nome_Produto,
     i.quantidade AS Quantidade_Comprada
 FROM clientes_livraria c
