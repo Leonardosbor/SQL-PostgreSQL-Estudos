@@ -104,3 +104,23 @@ GROUP BY c.id, c.nome
 HAVING COUNT(DISTINCT p.id) >= 2
 AND SUM(pr.preco * i.quantidade) > 400
 ORDER BY Valor_Total_Gasto DESC;
+
+
+
+-- Fazer uma consulta listando nome do cliente e quantidade de pedidos realizados → clientes sem pedidos devem aparecer; para esses clientes, a quantidade de pedidos deve aparecer como 0; ordenar pela quantidade de pedidos, do maior para o menor
+SELECT
+    c.nome, COUNT(DISTINCT p.id) AS Quantidade_Pedidos_Realizados
+FROM clientes_livraria c
+LEFT JOIN pedidos_livraria p ON c.id = p.cliente_id
+GROUP BY c.id, c.nome
+ORDER BY Quantidade_Pedidos_Realizados DESC;
+
+
+
+-- Fazer consulta mostrando o identificador e nome do cliente → mostrar somente os clientes que nunca realizaram nenhum pedido
+SELECT
+    c.id AS Identificador_Cliente,
+    c.nome AS Nome_Cliente
+FROM clientes_livraria c
+LEFT JOIN pedidos_livraria p ON c.id = p.cliente_id
+WHERE p.cliente_id IS NULL;
