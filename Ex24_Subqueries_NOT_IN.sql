@@ -80,3 +80,69 @@ ORDER BY c.nome ASC;
 
 
 
+-- Fazer uma consulta que mostre o ID e nome do cliente → retornar somente clientes que nunca compraram produtos abaixo de R$50; incluir clientes que nunca realizaram pedidos; ordenar os resultados alfabeticamente pelo nome
+SELECT 
+    c.id AS ID_Cliente,
+    c.nome AS Nome_cliente
+FROM clientes_livraria c
+WHERE c.id NOT IN (
+    SELECT DISTINCT p.cliente_id
+    FROM pedidos_livraria p
+    INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id
+    INNER JOIN produtos_livraria pr ON i.produto_id = pr.id
+    WHERE pr.preco < 50
+    AND p.cliente_id IS NOT NULL
+)
+ORDER BY c.nome ASC;
+
+
+
+
+-- Fazer consulta mostrando o ID, nome e preço do produto → incluir produtos que nunca foram vendidos; excluir produtos que apareceram pelo menos uma vez em um item de pedido com quantidade > 3; ordenar os produtos pelo preço, do maior para o menor
+SELECT
+    pr.id AS ID_Produto,
+    pr.nome AS Nome_Produto,
+    pr.preco AS Preco_Produto
+FROM produtos_livraria pr
+WHERE pr.id NOT IN (
+    SELECT DISTINCT i.produto_id
+    FROM item_pedido_livraria i
+    WHERE i.quantidade > 3
+    AND i.produto_id IS NOT NULL
+)
+ORDER BY pr.preco DESC;
+
+
+
+
+CREATE TABLE Clientes_Livraria(
+    id INTEGER PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+
+CREATE TABLE Pedidos_Livraria(
+    id INTEGER PRIMARY KEY,
+    descricao VARCHAR(100) NOT NULL, 
+    valor DECIMAL(10, 2) NOT NULL,
+    cliente_id INTEGER NOT NULL,
+    Foreign Key (cliente_id) REFERENCES Clientes_Livraria(id)
+
+);
+
+-- Fazer uma consulta que mostre o ID e nome dos clientes → retornar somente clientes que nunca realizaram pedidos com valor superior a R$500; incluir clientes que nunca fizeram pedidos; ordenar os clientes alfabeticamente
+SELECT
+    c.id AS ID_Clientes,
+    c.nome AS Nome_Clientes
+FROM clientes_livraria c
+WHERE c.id NOT IN (
+    SELECT DISTINCT p.cliente_id
+    FROM pedidos_livraria p
+    WHERE p.valor > 500
+    AND p.cliente_id IS NOT NULL
+)
+ORDER BY c.nome ASC;
+
+
+ 
