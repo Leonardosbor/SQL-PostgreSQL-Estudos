@@ -114,23 +114,6 @@ ORDER BY pr.preco DESC;
 
 
 
-
-CREATE TABLE Clientes_Livraria(
-    id INTEGER PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL
-);
-
-
-CREATE TABLE Pedidos_Livraria(
-    id INTEGER PRIMARY KEY,
-    descricao VARCHAR(100) NOT NULL, 
-    valor DECIMAL(10, 2) NOT NULL,
-    cliente_id INTEGER NOT NULL,
-    Foreign Key (cliente_id) REFERENCES Clientes_Livraria(id)
-
-);
-
 -- Fazer uma consulta que mostre o ID e nome dos clientes → retornar somente clientes que nunca realizaram pedidos com valor superior a R$500; incluir clientes que nunca fizeram pedidos; ordenar os clientes alfabeticamente
 SELECT
     c.id AS ID_Clientes,
@@ -145,4 +128,69 @@ WHERE c.id NOT IN (
 ORDER BY c.nome ASC;
 
 
- 
+
+-- Fazer consulta mostrando id, nome e preço do produto → incluir produtos que nunca foram vendidos; excluir produtos que apareceram pelo menos uma vez em um pedido com valor superior a 800; ordenar os produtos alfabeticamente pelo nome
+SELECT
+    pr.id AS id_Produto,
+    pr.nome AS Nome_Produto,
+    pr.preco AS Preco_Produto
+FROM produtos_livraria pr
+WHERE pr.id NOT IN (
+    SELECT DISTINCT i.produto_id
+    FROM item_pedido_livraria i
+    INNER JOIN pedidos_livraria p ON p.id = i.pedido_id 
+    WHERE p.valor > 800
+    AND i.produto_id IS NOT NULL
+)
+ORDER BY pr.nome ASC;
+
+
+
+-- Fazer consulta que mostre o id e nome do cliente → excluir clientes que compraram pelo menos um produto com preço entre 80 e 150; incluir clientes que compraram produtos exclusivamente fora dessa faixa de preço; ordenar os clientes alfabeticamente pelo nome
+SELECT 
+    c.id AS id_cliente,
+    c.nome AS Nome_Cliente
+FROM clientes_livraria c
+WHERE c.id NOT IN (
+    SELECT DISTINCT p.cliente_id
+    FROM pedidos_livraria p
+    INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id
+    INNER JOIN produtos_livraria pr ON i.produto_id = pr.id
+    WHERE pr.preco BETWEEN 80 AND 150
+    AND p.cliente_id IS NOT NULL
+)
+ORDER BY c.nome ASC;
+
+
+
+-- Fazer consulta mostrando o id e nome do cliente → excluir clientes que nunca realizaram pedidos; incluir clientes que compraram várias vezes, desde que nenhum item individual tenha quantidade superior a 2; ordenar os clientes alfabeticamente
+SELECT
+    c.id AS ID_Cliente,
+    c.nome AS Nome_Cliente
+FROM clientes_livraria c
+WHERE c.id NOT IN (
+    SELECT DISTINCT p.cliente_id
+    FROM pedidos_livraria p
+    INNER JOIN item_pedido_livraria i ON p.id = i.pedido_id
+    WHERE i.quantidade > 2
+    AND p.cliente_id IS NOT NULL  
+)
+ORDER BY c.nome ASC;
+
+
+
+-- Fazer consulta mostrando id, nome e preço do produto → excluir produtos que foram comprados pelo menos uma vez por clientes de Fpolis; incluir produtos comprados exclusivamente por clientes de outras cidades; incluir produtos que nunca foram vendidos; ordenar os produtos alfabeticamente pelo nome
+SELECT
+    pr.id AS ID_Produto,
+    pr.nome AS Nome_Produto,
+    pr.preco AS Preco_Produto
+FROM produtos_livraria pr
+WHERE pr.id NOT IN (
+    SELECT DISTINCT i.produto_id
+    FROM item_pedido_livraria i 
+    INNER JOIN pedidos_livraria p ON i.pedido_id = p.id
+    INNER JOIN clientes_livraria c ON p.cliente_id = c.id
+    WHERE c.cidade = 'Florianópolis'
+    AND i.produto_id IS NOT NULL
+)
+ORDER BY pr.nome ASC;
