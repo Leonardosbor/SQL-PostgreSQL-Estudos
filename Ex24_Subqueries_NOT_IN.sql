@@ -194,3 +194,35 @@ WHERE pr.id NOT IN (
     AND i.produto_id IS NOT NULL
 )
 ORDER BY pr.nome ASC;
+
+
+
+-- Fazer consulta que mostre o ID e nome do cliente → excluir clientes que fizeram pelo menos um pedido de R$700 ou mais; incluir clientes que nunca fizeram pedidos; incluir clientes que fizeram vários pedidos, desde que todos sejam inferiores a R$700; ordenar os resultados alfabeticamente pelo nome do cliente
+SELECT 
+    c.id AS ID_Cliente,
+    c.nome AS Nome_Cliente
+FROM clientes_livraria c
+WHERE c.id NOT IN (
+    SELECT DISTINCT p.cliente_id
+    FROM pedidos_livraria p
+    WHERE p.valor >= 700
+    AND p.cliente_id IS NOT NULL
+)
+ORDER BY c.nome ASC;
+
+
+
+-- Fazer consulta que mostre o ID, nome e preço do produto → excluir produtos que apareçam pelo menos uma vez em pedidos com valor superior e R$1000; incluir produtos que apareçam apenas em pedidos de R$1000 ou menos; incluir produtos que nunca foram vendidos; ordenar os produtos alfabeticamente pelo nome
+SELECT
+    pr.id as ID_Produto,
+    pr.nome AS Nome_Produto,
+    pr.preco AS Preco_Produto
+FROM produtos_livraria pr
+WHERE pr.id NOT IN (
+    SELECT DISTINCT i.produto_id
+    FROM item_pedido_livraria i
+    INNER JOIN pedidos_livraria p ON i.pedido_id = p.id
+    WHERE p.valor > 1000
+    AND i.produto_id IS NOT NULL
+)
+ORDER BY pr.nome ASC;
